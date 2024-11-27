@@ -64,3 +64,12 @@ While data is being saved to **PersistentDataStorage**, this is  a read operatio
 
 ### DelayProvider
 I have chosen to artificially create delay to simulate searching for data and copying memory into/from the store to thoroughly test race conditions and concurrency capabilities in an embedded environment. For multithreaded tests, the delay provider is set to delay based on the timer in **main.delay.TestDelayProvider.java**. When using the production delay, the function is a no-op resulting in no added delay to production code.
+
+### Dependencies
+
+The following dependencies are used to assert tests:
+* Junit4
+* Hamcrest-core
+
+Follow the instructions [here](https://github.com/junit-team/junit4/wiki/Download-and-Install) to add them as dependencies
+
