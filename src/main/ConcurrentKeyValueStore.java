@@ -30,7 +30,7 @@ public class ConcurrentKeyValueStore implements Serializable {
         }
     }
 
-    // User wants to create a new store with default Array Size and file names
+    // User wants to create a new store with default settings
     public ConcurrentKeyValueStore() {
         initializeConcurrentKeyValueStore(
                 Constants.HASH_ARRAY_SIZE,
@@ -47,7 +47,6 @@ public class ConcurrentKeyValueStore implements Serializable {
      * These are stored as DataStorageNodes which retains the CollisionList and the index its stored at
     */
     public void loadData(String fileName) {
-
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             int numLists = (int) ois.readObject();
             int hashArraySize = (int) ois.readObject();
@@ -131,7 +130,6 @@ public class ConcurrentKeyValueStore implements Serializable {
         private KeyValueNode root;
 
         private byte[] get(String key) {
-
             KeyValueNode currentNode = root;
             while (currentNode != null) {
                 delayProvider.delay(); // Artificial delay to simulate searching for the current key in the collision list
@@ -150,7 +148,6 @@ public class ConcurrentKeyValueStore implements Serializable {
         }
 
         private KeyValueNode putHelper(KeyValueNode node, String key, byte[] value) {
-
             delayProvider.delay(); // Artificial delay to simulate searching for the current key in the collision list
             if (node == null) {
                 return new KeyValueNode(key, value, value.length, null);
@@ -166,7 +163,6 @@ public class ConcurrentKeyValueStore implements Serializable {
         }
 
         private void put(String key, byte[] value) {
-
             byte[] valueToPut = new byte[value.length];
             for (int index = 0; index < value.length; index++) {
                 delayProvider.delay(); // Artificial delay to simulate copying data into a spot in memory
@@ -177,6 +173,7 @@ public class ConcurrentKeyValueStore implements Serializable {
         }
 
         private static class KeyValueNode implements Serializable {
+
             String key;
             byte[] value;
             int valueSize;
@@ -219,8 +216,8 @@ public class ConcurrentKeyValueStore implements Serializable {
                     oos.writeObject(numLists);
                     oos.writeObject(hashArraySize);
                     oos.writeObject(nPutCalls);
-                    while (node != null) {
 
+                    while (node != null) {
                         oos.writeObject(node.index);
                         locks[node.index].readLock().lock();
                         oos.writeObject(node.collisionList);
@@ -234,16 +231,8 @@ public class ConcurrentKeyValueStore implements Serializable {
             }
         }
 
-        private static class DataStorageNode implements Serializable{
-            CollisionList collisionList;
-            int index;
-            DataStorageNode next;
-
-                DataStorageNode(CollisionList collisionList, int index, DataStorageNode next) {
-                this.collisionList = collisionList;
-                this.index = index;
-                this.next = next;
-            }
+        private record DataStorageNode(CollisionList collisionList, int index,
+                                       PersistentDataStorage.DataStorageNode next) implements Serializable {
         }
     }
 }
