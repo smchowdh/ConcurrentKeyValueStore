@@ -1,4 +1,4 @@
-package main.Delay;
+package main.delay;
 
 public class TestDelayProvider implements DelayProvider{
 

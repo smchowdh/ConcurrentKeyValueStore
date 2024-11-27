@@ -1,14 +1,10 @@
 package main;
 
-import main.Delay.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
+import main.delay.*;
 import java.io.*;
-import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class ConcurrentKeyValueStore implements Serializable{
+public class ConcurrentKeyValueStore implements Serializable {
 
     private CollisionList[] hashArray;
     private ReentrantReadWriteLock[] locks;
@@ -89,7 +85,7 @@ public class ConcurrentKeyValueStore implements Serializable{
         delayProvider = new ProductionDelayProvider();
     }
 
-    public int getHashKey(String key) {
+    private int getHashKey(String key) {
         return Math.abs(key.hashCode()) % hashArraySize;
     }
 
@@ -110,7 +106,6 @@ public class ConcurrentKeyValueStore implements Serializable{
 
     public void put(String key, byte[] value) {
         int index = getHashKey(key);
-
         locks[index].writeLock().lock();
         if (hashArray[index] == null) {
             CollisionList newCollisionList = new CollisionList();
@@ -120,6 +115,7 @@ public class ConcurrentKeyValueStore implements Serializable{
         hashArray[index].put(key, value);
         locks[index].writeLock().unlock();
 
+        // Edge Triggered Persistence
         synchronized (putCallsLock) {
             numberOfPutCalls++;
             if (numberOfPutCalls == nPutCalls) {
@@ -138,10 +134,11 @@ public class ConcurrentKeyValueStore implements Serializable{
 
             KeyValueNode currentNode = root;
             while (currentNode != null) {
+                delayProvider.delay(); // Artificial delay to simulate searching for the current key in the collision list
                 if (currentNode.key.equals(key)) {
                     byte[] returnValue = new byte[currentNode.valueSize];
                     for (int index = 0; index < currentNode.valueSize; index++) {
-                        delayProvider.delay();
+                        delayProvider.delay(); // Artificial delay to simulate copying data into a spot in memory
                         returnValue[index] = currentNode.value[index];
                     }
                     return returnValue;
@@ -154,6 +151,7 @@ public class ConcurrentKeyValueStore implements Serializable{
 
         private KeyValueNode putHelper(KeyValueNode node, String key, byte[] value) {
 
+            delayProvider.delay(); // Artificial delay to simulate searching for the current key in the collision list
             if (node == null) {
                 return new KeyValueNode(key, value, value.length, null);
             } else {
@@ -171,14 +169,14 @@ public class ConcurrentKeyValueStore implements Serializable{
 
             byte[] valueToPut = new byte[value.length];
             for (int index = 0; index < value.length; index++) {
-                delayProvider.delay();
+                delayProvider.delay(); // Artificial delay to simulate copying data into a spot in memory
                 valueToPut[index] = value[index];
             }
 
             root = putHelper(root, key, valueToPut);
         }
 
-        private static class KeyValueNode implements Serializable{
+        private static class KeyValueNode implements Serializable {
             String key;
             byte[] value;
             int valueSize;
@@ -192,7 +190,6 @@ public class ConcurrentKeyValueStore implements Serializable{
             }
         }
     }
-
 
     /* Lightweight implementation of a linked list that stores Nodes for persistent data storage.
     *  This data type stores the KeyValue store in a serializable format
@@ -248,7 +245,5 @@ public class ConcurrentKeyValueStore implements Serializable{
                 this.next = next;
             }
         }
-
-
     }
 }

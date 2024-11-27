@@ -92,6 +92,8 @@ public class ConcurrentKeyValueStoreTest {
         assertEquals(value2, new String(store.get(key2)));
     }
 
+
+    // <--------- Unit Tests End, Multithreaded Tests Start --------->
     @Test
     /* Compare the times of singleThread store and multithreaded store
      * With the single thread we will sequentially get an element 5 times and measure system time
