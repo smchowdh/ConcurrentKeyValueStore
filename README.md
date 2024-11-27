@@ -63,4 +63,4 @@ While data is being saved to **PersistentDataStorage**, this is  a read operatio
 ## Tests Implementation Details
 
 ### DelayProvider
-I have chosen to artificially create delay to simulate searching for data and copying memory into/from the store to thoroughly test race conditions and concurrency capabilities in an embedded environment. For multithreaded tests, the delay provider is set to delay based on the timer in **main.delay.TestDelayProvider.java** When using the production delay, the function is a no-op resulting in no added delay to production code.
+I have chosen to artificially create delay to simulate searching for data and copying memory into/from the store to thoroughly test race conditions and concurrency capabilities in an embedded environment. For multithreaded tests, the delay provider is set to delay based on the timer in **main.delay.TestDelayProvider.java**. When using the production delay, the function is a no-op resulting in no added delay to production code.
