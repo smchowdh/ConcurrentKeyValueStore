@@ -1,10 +1,10 @@
 # ConcurrentKeyValueStore
 
-This is an implementation of concurrent key value store get and put calls. This includes **get()** and **put()** functionality
+This is an implementation of a concurrent key value store get and put calls. This includes **get()** and **put()** functionality
 
 ## Design Details
 ### Data processing
-The implementation stores the key value store as a hashmap structure where indexes in the hashArray are obtained through the key's string (see **getHashKey()**). The size of the hash array can be defined by the constructor's input parameter, **hashArraySize**. When collisions (hashKeys are the same) occur, the location in **hashArraySize** will store the data in a linkedList (named **CollisionList**). 
+The implementation stores the key value store in a Hash map structure where indexes in a hash array are obtained through the key's string (see **getHashKey()**). The size of the hash array can be defined by the constructor's input parameter, **hashArraySize**. When collisions (hashKeys are the same) occur, the location in **hashArraySize** will store the data in a Linked List (named **CollisionList**). 
 
 ### Data locking
 In order to allow multiple threads to work efficiently on the store without triggering race conditions, when a key is sent to **get()** or **put()** the relevant lock is put in place denoted by the hash key. This is to allow simultaneous updates to the hash array to maximize concurrency usage. This level of concurrent threads working on the store can be specified by the **hashArraySize**. In general, larger **hashArraySize** means more threads can manipulate data in the store at the same time however more space is needed to store the reference to the **CollisionList** and to the new locks.
@@ -61,8 +61,6 @@ While data is being saved to **PersistentDataStorage**, this is  a read operatio
 </table>
 
 ## Tests Implementation Details
-
-In order to simulate testing functionality in embedded-ready environments multiple design features were made.
 
 ### DelayProvider
 I have chosen to artificially create delay to simulate searching for data and copying memory into/from the store to thoroughly test race conditions and concurrency capabilities in an embedded environment. For multithreaded tests, the delay provider is set to delay based on the timer in **main.delay.TestDelayProvider.java** When using the production delay, the function is a no-op resulting in no added delay to production code.
