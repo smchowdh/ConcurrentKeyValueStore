@@ -221,7 +221,7 @@ public class ConcurrentKeyValueStore implements Serializable {
                         oos.writeObject(node.index);
                         locks[node.index].readLock().lock();
                         oos.writeObject(node.collisionList);
-                        locks[node.index].readLock().lock();
+                        locks[node.index].readLock().unlock();
 
                         node = node.next;
                     }
