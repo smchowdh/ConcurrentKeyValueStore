@@ -49,7 +49,7 @@ While data is being saved to **PersistentDataStorage**, this is  a read operatio
 ## Method Summary
 <table>
   <tr>
-    <td>byte[] get(String key)()</td>
+    <td>byte[] get(String key)</td>
     <td>Gets the value at key</td>
 
   </tr>
