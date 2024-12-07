@@ -112,7 +112,7 @@ public class ConcurrentKeyValueStoreTest {
         }
         long endSingleThreadedTime = System.currentTimeMillis();
 
-        int numThreads = 1;
+        int numThreads = 5;
         Thread[] threads = new Thread[numThreads];
         for (int numThread = 0; numThread < numThreads; numThread++) {
             threads[numThread] = new Thread(() -> {
